@@ -199,3 +199,6 @@ body.dragging .empty-card, body.dragging .block { outline: 3px dashed var(--acce
 @media (pointer: coarse) { .g-dots button { width: 14px; height: 14px; } .g-dots button.on { width: 26px; } }
 
 .guide:focus, .guide:focus-visible { outline: none; }
+
+/* Botón Guía: mismo aspecto que Añadir PDF */
+@media (min-width: 760px) { .top .btn#btn-guide { padding: 0 14px; } }

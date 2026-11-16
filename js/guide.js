@@ -63,6 +63,8 @@
     $('#g-next').addEventListener('click', () => show(i + 1));
     $('#g-dots').addEventListener('click', (e) => { const b = e.target.closest('[data-go]'); if (b) show(+b.dataset.go); });
     $('#g-close').addEventListener('click', () => $('#guide').close());
+    // Al cerrar, el foco vuelve al botón: se quita para que no quede el anillo de foco.
+    $('#guide').addEventListener('close', () => { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); });
     $('#guide').addEventListener('click', (e) => { if (e.target === $('#guide')) $('#guide').close(); });
     $('#guide').addEventListener('keydown', (e) => {
         if (e.key === 'ArrowRight') show(i + 1);
