@@ -6,7 +6,9 @@ const NETWORK_TIMEOUT_MS = 4000;
 const SHELL_URLS = [
     './', './index.html', './manifest.webmanifest', './version.js',
     './css/app.css', './css/ios.css',
-    './js/app.js', './js/sections.js', './js/update.js',
+    './js/app.js', './js/sections.js', './js/update.js', './js/guide.js',
+    './guia/paso1.jpg', './guia/paso2.jpg', './guia/paso3.jpg', './guia/paso4.jpg',
+    './guia/paso5.jpg', './guia/paso6.jpg', './guia/paso7.jpg', './guia/paso8.jpg',
     './vendor/pdf-3.11.174.min.js', './vendor/pdf.worker-3.11.174.min.js', './vendor/pdf-lib-1.17.1.min.js',
     './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png',
     './icons/icon-maskable-512.png', './icons/apple-touch-icon.png'
