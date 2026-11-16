@@ -1,0 +1,170 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+/* Capa de diseño iOS (patrón de todas las apps; plantilla en la skill pwa-ios-app: ios.template.css).
+   Se carga DESPUÉS de la hoja de la app. Solo usa los tokens --accent, --accent-ink, --danger, --ink, --muted:
+   cambiar el color de la app = cambiar --accent. Referencia viva: MD/index.html. */
+
+/* ---------- Tokens ---------- */
+:root {
+  --bg: #ffffff;               /* fondo de página neutro */
+  --bar-tint: color-mix(in srgb, var(--accent) 7%, #ffffff);   /* toque de color: SOLO la barra superior y el panel de ajustes */
+  --card: #ffffff;             /* superficies elevadas: menús, diálogos */
+  --ink: #0f172a;
+  --muted: #64748b;
+  --fill: rgba(15, 23, 42, .045);     /* superficies agrupadas */
+  --fill-2: rgba(15, 23, 42, .07);    /* controles en reposo */
+  --fill-3: rgba(15, 23, 42, .13);    /* controles al pasar el puntero */
+  --line: rgba(15, 23, 42, .10);      /* separadores de 0.5 px */
+  --soft: var(--fill-2);
+  --radius: 18px;
+  --shadow: none;
+  --ctl: 40px;                        /* alto de controles; 44 px en táctil */
+  --accent-tint: color-mix(in srgb, var(--accent) 14%, transparent);
+  --danger-tint: color-mix(in srgb, var(--danger) 14%, transparent);
+  --glass: color-mix(in srgb, var(--card) 80%, transparent);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000; --bar-tint: color-mix(in srgb, var(--accent) 9%, #000000); --card: #1c1c1e; --ink: #f2f2f7; --muted: #9a9aa3;
+    --fill: rgba(255, 255, 255, .06); --fill-2: rgba(255, 255, 255, .10); --fill-3: rgba(255, 255, 255, .17);
+    --line: rgba(255, 255, 255, .12);
+  }
+}
+@media (pointer: coarse) { :root { --ctl: 44px; } }
+
+html, body { background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "SF Pro Text", sans-serif; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+
+/* ---------- Superficies ---------- */
+.card { background: var(--fill); border: 0; box-shadow: none; border-radius: var(--radius); }
+.empty { border: 0; background: var(--fill); }
+.dest { border: 0; background: var(--fill-2); border-radius: 14px; overflow: hidden; }
+.dest-row + .dest-row { border-top: .5px solid var(--line); }
+table, th, td { border-color: var(--line); }
+td, th { border-bottom-width: .5px; }
+.thumb { border-radius: 8px; }
+
+/* ---------- Botones: píldoras sobre un tinte, sin borde ---------- */
+.btn { min-height: var(--ctl); padding: 0 18px; border: 0; border-radius: 99px; background: var(--fill-2); color: var(--ink); font-weight: 600; transition: background-color .15s, transform .05s, opacity .15s; }
+.btn:active:not(:disabled) { transform: scale(.96); }
+.btn:disabled { opacity: .38; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.danger { background: var(--danger-tint); color: var(--danger); }
+.btn.ghost { background: transparent; }
+.btn.small { min-height: 34px; padding: 0 14px; font-size: 13px; }
+.btn.big { min-height: 48px; padding: 0 24px; }
+@media (pointer: coarse) { .btn.small { min-height: 40px; } }
+@media (hover: hover) {
+  .btn:hover:not(:disabled) { background: var(--fill-3); border: 0; }
+  .btn.primary:hover:not(:disabled) { background: var(--accent); filter: brightness(1.07); }
+  .btn.danger:hover:not(:disabled) { background: color-mix(in srgb, var(--danger) 22%, transparent); }
+  .btn.ghost:hover:not(:disabled) { background: var(--fill-2); }
+}
+.icon-btn { border-radius: 99px; color: var(--muted); }
+.icon-btn:hover { background: var(--fill-2); }
+.edit-btn { border: 0; border-radius: 99px; background: var(--fill-2); color: var(--ink); }
+.edit-btn:hover { background: var(--fill-3); }
+.chip { background: var(--accent-tint); }
+
+/* ---------- Campos ---------- */
+select, input[type="text"], input[type="number"] { min-height: var(--ctl); padding: 0 14px; border: 0; border-radius: 12px; background: var(--fill-2); color: var(--ink); }
+input[type="range"] { accent-color: var(--accent); background: none; min-height: 44px; }
+
+/* ---------- Selección: píldoras, calidad, pestañas segmentadas ---------- */
+.pill-sel { min-height: var(--ctl); padding: 0 16px; border: 0; background: var(--fill-2); box-shadow: none; }
+.pill-sel[aria-pressed="true"] { background: var(--accent-tint); color: var(--accent); box-shadow: none; }
+@media (hover: hover) { .pill-sel:not([aria-pressed="true"]):not(:disabled):hover { background: var(--fill-3); } }
+.seg span { border: 0; border-radius: 14px; background: var(--fill-2); color: var(--ink); }
+.seg input:checked + span { background: var(--accent-tint); color: var(--accent); box-shadow: none; border: 0; }
+.tabs { background: var(--fill-2); border-radius: 12px; }
+.tabs button { border-radius: 10px; color: var(--muted); }
+.tabs button[aria-selected="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgb(0 0 0 / .14); }
+@media (prefers-color-scheme: dark) { .tabs button[aria-selected="true"] { background: var(--fill-3); box-shadow: none; } }
+
+/* ---------- Avisos ---------- */
+.notice, .toast-once, .tip { border-radius: 16px; }
+.toast-once, .tip { background: var(--fill); }
+.toast { background: #0f172a; color: #fff; border-radius: 99px; padding: 11px 18px; box-shadow: none; bottom: max(76px, env(safe-area-inset-bottom)); }
+.badge { background: var(--fill-2); }
+
+/* ---------- Vidrio: menús, desplegables y diálogos ---------- */
+.menu, .about-body { background: var(--glass); -webkit-backdrop-filter: blur(24px) saturate(180%); backdrop-filter: blur(24px) saturate(180%); border: .5px solid var(--line); border-radius: 16px; box-shadow: 0 12px 40px rgb(0 0 0 / .18); }
+.menu-item { border-radius: 10px; }
+dialog { border: 0; border-radius: 18px; background: var(--card); box-shadow: 0 20px 50px rgb(0 0 0 / .3); }
+dialog::backdrop { background: rgba(15, 23, 42, .4); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.side { border-radius: var(--radius); background: var(--bar-tint); }
+@media (max-width: 999px) { .side { background: var(--bar-tint); border-radius: 22px 22px 0 0; } .side .side-head { border-bottom-width: .5px; } }
+
+/* ---------- Progreso: barras redondeadas; el total, como línea en el borde inferior de la barra superior ---------- */
+.progress, .save-bar { background: var(--fill-2); }
+.top-progress { position: absolute; left: 0; right: 0; bottom: -0.5px; height: 3px; overflow: hidden; pointer-events: none; }
+.top-progress > i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 0 2px 2px 0; transition: width .2s ease; }
+.overall .progress { display: none; }
+
+/* ---------- Pie: píldora pequeña (≈34 px), abajo a la izquierda, mimetizada con el fondo; NUNCA una barra a todo el ancho ----------
+   El área de trabajo llega al borde inferior (padding-bottom: calc(var(--foot) + 16px) con --foot: calc(44px + env(safe-area-inset-bottom))).
+   Su desplegable (.about-body) reúne actualización, versiones y agradecimientos/licencias; no hay diálogo «Acerca de». */
+.foot {
+  position: fixed; left: max(10px, env(safe-area-inset-left)); bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); z-index: 8;
+  max-width: calc(100vw - 20px); border-radius: 16px; padding: 0 12px; border: 0;
+  background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+.about summary { height: 34px; }
+.ver { font-size: 15px; }
+.about-body { left: -12px; width: min(440px, calc(100vw - 20px)); background: color-mix(in srgb, var(--card) 94%, transparent); }
+.about-body li a { color: var(--ink); }
+
+/* ---------- Barra superior de vidrio (como MD / iOS) ----------
+   Borde a borde, 56 px + zona segura, sticky. Más opaca arriba y más clara abajo; el desenfoque se apaga en un
+   borde difuminado (.bar-fade, elemento aparte). Botones en píldora, iconos de trazo; la etiqueta solo con sitio. */
+.top {
+  --bar-h: calc(56px + env(safe-area-inset-top, 0px));
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+  width: auto; max-width: none; margin: 0; height: var(--bar-h); min-height: 0; box-sizing: border-box;
+  padding: env(safe-area-inset-top, 0px) max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));
+  gap: 8px;
+  /* En iOS (modo `default`) la barra de estado la pinta el sistema: blanca en claro y negra en oscuro; no se puede teñir.
+     Por eso la barra arranca del MISMO color que el sistema (--bg) y solo hacia abajo se tiñe con el vidrio degradado. */
+  background: linear-gradient(to bottom, var(--bg) 0, var(--bg) env(safe-area-inset-top, 0px), color-mix(in srgb, var(--bg) 62%, transparent) env(safe-area-inset-top, 0px), color-mix(in srgb, var(--bar-tint) 78%, transparent) 100%);
+  -webkit-backdrop-filter: blur(6px) saturate(190%); backdrop-filter: blur(6px) saturate(190%);
+  border-bottom: .5px solid color-mix(in srgb, var(--ink) 6%, transparent);
+}
+body { padding-top: calc(56px + env(safe-area-inset-top, 0px)) !important; }
+.bar-fade {
+  position: fixed; left: 0; right: 0; top: calc(56px + env(safe-area-inset-top, 0px)); height: 16px; z-index: 19; pointer-events: none;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--bar-tint) 25%, transparent), transparent);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  -webkit-mask-image: linear-gradient(to bottom, #000, transparent); mask-image: linear-gradient(to bottom, #000, transparent);
+  transition: opacity .2s ease;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .top { background: color-mix(in srgb, var(--bar-tint) 97%, transparent); }
+  .bar-fade { display: none; }
+}
+.top .brand { gap: 10px; margin-right: 6px; }
+.top .brand h1 { font-size: 16px; font-weight: 700; letter-spacing: -.01em; }
+.logo-img { width: 30px; height: 30px; border-radius: 8px; display: block; flex: none; }
+.top { --btn: 36px; }
+@media (pointer: coarse) { .top { --btn: 40px; } }
+.top .btn { height: var(--btn); min-height: 0; min-width: var(--btn); padding: 0; gap: 6px; font-size: 14px; }
+.top .btn .label { display: none; }
+.top .btn.solid { background: var(--accent); color: var(--accent-ink); }
+.top .btn.tint-danger { background: var(--danger-tint); color: var(--danger); }
+@media (hover: hover) { .top .btn.solid:hover:not(:disabled) { background: var(--accent); filter: brightness(1.07); } }
+@media (min-width: 760px) { .top .btn.solid, .top .btn.tint-danger { padding: 0 14px; } .top .btn .label { display: inline; } }
+.top #btn-settings { display: none; }
+@media (max-width: 999px) { .top #btn-settings { display: inline-flex; } }
+.side { top: calc(56px + env(safe-area-inset-top, 0px) + 16px); }
+@media (min-width: 1000px) { .side { top: calc(56px + env(safe-area-inset-top, 0px) + 16px); max-height: calc(100dvh - 56px - env(safe-area-inset-top, 0px) - 16px - 64px); } .layout > main { padding-top: 0; } .layout { margin-top: 16px; } }
+main { padding-top: 16px; }
+@media (max-width: 639px) { .top { padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); } }
+
+/* ---------- Pantalla ancha: el pie ocupa solo el área de trabajo (no choca con el panel lateral) ---------- */
+@media (min-width: 1000px) {
+  .foot { left: 372px; padding-left: 0; }
+  .side { max-height: calc(100dvh - 56px - env(safe-area-inset-top, 0px) - 16px - 16px); }
+  .about-body { width: min(420px, 100%); }
+}
+
+#add-menu { z-index: 40; }
+.top .btn#add .label { display: none; }
+@media (min-width: 760px) { .top .btn#add { padding: 0 14px; } .top .btn#add .label { display: inline; } }

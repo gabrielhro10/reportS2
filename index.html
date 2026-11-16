@@ -1,0 +1,110 @@
+<!doctype html>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/. -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ReportS2</title>
+<meta name="description" content="Ordena y une los PDF de la cuenta de cobro y prepara los datos del reporte en SECOP II. Todo en tu dispositivo.">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="app-titlebar" content="overlay">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ReportS2">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/ios.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h8M16 7h4M4 17h2M10 17h10"/><circle cx="14" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="M6 14l6-6 6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M6 10l6 6 6-6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v4h4"/></symbol>
+    <symbol id="i-open" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="i-done" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></symbol>
+  </defs>
+</svg>
+
+<div class="bar-fade"></div>
+<header class="top">
+  <div class="brand"><img class="logo-img" src="icons/icon.svg" alt=""><h1>ReportS2</h1></div>
+  <span class="spacer"></span>
+  <button type="button" class="btn" id="btn-settings" aria-label="Datos y reportes"><svg class="ic"><use href="#i-settings"/></svg></button>
+  <button type="button" class="btn" id="add" aria-label="Añadir PDF"><svg class="ic"><use href="#i-plus"/></svg><span class="label">Añadir PDF</span></button>
+  <button type="button" class="btn tint-danger" id="btn-clear" hidden aria-label="Limpiar"><svg class="ic"><use href="#i-trash"/></svg><span class="label">Limpiar</span></button>
+  <button type="button" class="btn solid" id="btn-all" hidden aria-label="Descargar todos"><svg class="ic"><use href="#i-download"/></svg><span class="label">Descargar todos</span></button>
+  <div class="top-progress"><i id="progress"></i></div>
+</header>
+
+<div class="layout">
+  <aside class="side" id="side" aria-label="Reportes">
+    <div class="side-head"><h2>Reportes</h2><button type="button" class="btn small" id="sheet-done">Listo</button></div>
+    <div id="rep-groups"></div>
+  </aside>
+
+  <main id="main">
+    <section class="empty-card" id="empty">
+      <svg class="ic big"><use href="#i-file"/></svg>
+      <h2>Suelta aquí los PDF de todas las cuotas</h2>
+      <button type="button" class="btn primary big" id="add-empty"><svg class="ic"><use href="#i-plus"/></svg>Añadir PDF</button>
+    </section>
+
+    <section class="block" id="files-block" hidden>
+      
+      <ul class="files" id="files"></ul>
+    </section>
+
+    <section id="pkg-block" hidden>
+      <h3 class="sec-title">Paquetes <span class="muted" id="pkg-count"></span></h3>
+      <div class="pkgs" id="pkgs"></div>
+    </section>
+  </main>
+</div>
+
+<dialog id="zoom" aria-label="Cuenta de cobro">
+  <button type="button" class="icon-btn" id="zoom-close" aria-label="Cerrar"><svg class="ic"><use href="#i-close"/></svg></button>
+  <img id="zoom-img" alt="Cuenta de cobro">
+</dialog>
+<div class="scrim" id="scrim"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<input type="file" id="file-input" accept=".pdf,application/pdf" multiple hidden>
+
+<footer class="foot">
+  <details class="about">
+    <summary><span class="ver" id="ver">ReportS2</span><span class="desc">Paquete SECOP II</span></summary>
+    <div class="about-body">
+      <div class="update-row" id="update-row">
+        <span id="update-text" role="status" aria-live="polite">Actualización</span>
+        <button type="button" id="btn-update" aria-label="Buscar actualización" title="Buscar actualización"><svg class="ic"><use href="#i-refresh"/></svg></button>
+      </div>
+      <ul>
+        <li><span><a href="https://mozilla.org/MPL/2.0/" target="_blank" rel="noopener">ReportS2</a></span><span>MPL-2.0</span></li>
+        <li><span><a href="https://mozilla.github.io/pdf.js/" target="_blank" rel="noopener">pdf.js</a> 3.11.174</span><span>Apache-2.0</span></li>
+        <li><span><a href="https://pdf-lib.js.org/" target="_blank" rel="noopener">pdf-lib</a> 1.17.1</span><span>MIT</span></li>
+      </ul>
+    </div>
+  </details>
+</footer>
+
+<noscript>ReportS2 necesita JavaScript.</noscript>
+<script src="version.js"></script>
+<script src="vendor/pdf-3.11.174.min.js"></script>
+<script src="vendor/pdf-lib-1.17.1.min.js"></script>
+<script src="js/update.js"></script>
+<script src="js/sections.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
