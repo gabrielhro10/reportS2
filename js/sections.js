@@ -14,7 +14,7 @@
         { key: 'recibido',   label: 'Recibido a satisfacción',       text: ['FORMATO DE RECIBIDO A SATISFACCION'] },
         { key: 'informe',    label: 'Informe de avance',             text: ['INFORME DE AVANCES A CONTRATOS', 'INFORME DE AVANCE A CONTRATOS'] },
         { key: 'acta',       label: 'Acta de inicio',                text: ['OBJETO DEL ACTA'] },
-        { key: 'planilla',   label: 'Planilla de seguridad social',  text: ['RESUMEN PLANILLA PAGADA', 'CANCELO LOS APORTES DE SEGURIDAD SOCIAL'] },
+        { key: 'planilla',   label: 'Planilla de seguridad social',  text: ['RESUMEN PLANILLA PAGADA', 'CANCELO LOS APORTES DE SEGURIDAD SOCIAL'], match: isPlanilla, hint: /planilla|\bpila\b|aporte|seguridad.?social/ },
         { key: 'cuenta',     label: 'Cuenta de cobro',               text: ['CUENTA DE COBRO NO'] },
         { key: 'certificacion', label: 'Certificación de retención', text: ['ARTICULO 383'] },
         { key: 'rut',        label: 'RUT',                           text: ['REGISTRO UNICO TRIBUTARIO', 'RESPONSABILIDADES, CALIDADES Y ATRIBUTOS'], hint: /\brut\b/ },
@@ -36,6 +36,38 @@
     }
     function compact(s) { return strip(s).replace(/[^A-Z0-9]/g, ''); }
 
+    // ---------- Planilla de aportes (PILA) de cualquier operador ----------
+    // Cada operador (SOI, Aportes en Línea, Mi Planilla, Asopagos, Enlace Operativo, ARUS…) usa su propio formato,
+    // así que en vez de una frase fija se busca: pagos a salud, pensión o ARL + campos propios de una planilla.
+    // Siglas cortas con límite de palabra sobre el texto `w`; frases largas sobre el texto compacto `c`.
+    const SUBSYSTEMS = [
+        // Salud: EPS
+        (w, c) => /\bEPS\b/.test(w) || /SALUD(?!O)/.test(c) ||
+            /NUEVAEPS|SANITAS|SALUDTOTAL|COOSALUD|MUTUALSER|FAMISANAR|COMPENSAREPS|EMSSANAR|ASMETSALUD|CAJACOPI|SAVIASALUD|ALIANSALUD|SURAEPS|EPSSURA/.test(c),
+        // Pensión: AFP
+        (w, c) => /\bAFP\b/.test(w) || /PENSION/.test(c) || /COLPENSIONES|PORVENIR|PROTECCION|COLFONDOS|SKANDIA/.test(c),
+        // Riesgos laborales: ARL
+        (w, c) => /\bARL\b/.test(w) || /RIESGOSLABORALES|RIESGOSPROFESIONALES/.test(c) ||
+            /POSITIVACOMPANIA|ARLSURA|SURAARL|SEGUROSBOLIVAR|COLMENASEGUROS|AXACOLPATRIA|LAEQUIDAD|SEGUROSALFA/.test(c),
+    ];
+    const PILA_FIELDS = [
+        (w, c) => /PLANILLA/.test(c) || /\bPILA\b/.test(w),
+        (w, c) => /\bIBC\b/.test(w) || /INGRESOBASEDECOTIZACION/.test(c),
+        (w, c) => /COTIZANTE/.test(c),
+        (w, c) => /APORTANTE/.test(c),
+        (w, c) => /DIASCOTIZADOS|DIASCOT/.test(c),
+        (w, c) => /OPERADOR/.test(c),
+        (w, c) => /\bSOI\b|\bARUS\b/.test(w) ||
+            /APORTESENLINEA|MIPLANILLA|ASOPAGOS|ENLACEOPERATIVO|SUAPORTE|PAGOSIMPLE|SIMPLESA|FEDECAJAS|PILAFACIL/.test(c),
+    ];
+    /** Página de una planilla de aportes: al menos un subsistema (salud, pensión o ARL) y dos campos de planilla. */
+    function isPlanilla(rawText) {
+        const w = strip(rawText), c = compact(rawText);
+        const subs = SUBSYSTEMS.filter(f => f(w, c)).length;
+        const fields = PILA_FIELDS.filter(f => f(w, c)).length;
+        return subs >= 1 && fields >= 2;
+    }
+
     /** Clave de sección según el texto de la página, o null. */
     function classify(rawText) {
         const c = compact(rawText);
@@ -43,6 +75,10 @@
         // Las marcadas `first` se evalúan antes (el registro presupuestal también trae «Disponible PAC»).
         for (const s of PRIORITY) {
             if (s.compact.some(p => p && c.includes(p))) return s.key;
+        }
+        // Sin frase exacta: reglas generales (p. ej. planillas de otros operadores).
+        for (const s of PRIORITY) {
+            if (s.match && s.match(rawText)) return s.key;
         }
         return null;
     }
